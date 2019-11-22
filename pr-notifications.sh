@@ -19,6 +19,19 @@ function executeCurl() {
 	rm ${CURL_OUT_TMP}
 }
 
+function checkDependencies() {
+	requirementsToCheck="sqlite3
+				curl
+				notify-send
+				jq
+				awk"
+
+	for requirement in $requirementsToCheck
+	do
+		which $requirement > /dev/null || (echo "I can't find : ${requirement} : - Aborting"; exit 5)
+	done
+}
+
 if [ -z "$sqlite3DbPath" ]
 then
 	# Using defautl db in .config/pr-notifier/data.db
@@ -35,6 +48,8 @@ then
 	echo "No GitHub token!"
 	exit 1
 fi
+
+checkDependencies
 
 # Create empty db if not present
 if [ ! -d "$(dirname $sqlite3DbPath)" ]
