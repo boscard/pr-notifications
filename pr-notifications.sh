@@ -21,13 +21,13 @@ function executeCurl() {
 
 if [ -z "$sqlite3DbPath" ]
 then
-	# Using defautl db in .confid/pr-notifier/data.db
+	# Using defautl db in .config/pr-notifier/data.db
 	sqlite3DbPath="${HOME}/.config/pr-notifier/data.db"
 fi
 
 if [ -z "$fullReminder" ]
 then
-	fullReminder=60
+	fullReminder=86400
 fi
 
 if [ -z "$token" ]
@@ -46,16 +46,22 @@ if [ ! -f "$sqlite3DbPath" ]
 then
 	sqlite3 "$sqlite3DbPath" "CREATE TABLE prs ( html_url TEXT PRIMARY KEY, title TEXT, id INTEGER);" || (echo "Cannot create database!"; exit 3)
 	sqlite3 "$sqlite3DbPath" "CREATE TABLE config ( full_reminder_last_executed_at INTEGER);" || (echo "Cannot create database!"; exit 3)
+	sqlite3 "$sqlite3DbPath" "INSERT INTO config ( full_reminder_last_executed_at ) VALUES ( 0 )"
 fi
+
+# get timestamp for calculation
+currentTS=$(date +%s)
 
 # get user login
 userLogin=$(executeCurl -s -L -u $token https://api.github.com/user | jq -r '.login')
 
+pendingPRs=0
 # get pr's
 oldIFS=$IFS
 IFS=$'\n'
 for dataLine in $(executeCurl -s -L -u $token "https://api.github.com/search/issues?q=is:open+is:pr+review-requested:${userLogin}" | jq -r '.items[] | "\(.id);\(.html_url);\(.title)"')
 do
+	pendingPRs=$((pendingPRs + 1))
 	pr_id=$(echo $dataLine | awk -F ';' '{print $1}')
 	html_link=$(echo $dataLine | awk -F ';' '{print $2}')
 	title=$(echo $dataLine | awk -F ';' '{print $3}')
@@ -66,3 +72,10 @@ do
 	fi
 done
 IFS=$oldIFS
+
+lastNotificationDate=$(sqlite3 "$sqlite3DbPath" "SELECT full_reminder_last_executed_at FROM config" )
+if [ $((currentTS - lastNotificationDate)) -gt $fullReminder ]
+then
+	sqlite3 "$sqlite3DbPath" "UPDATE config SET full_reminder_last_executed_at=${currentTS}"
+	notify-send "Some PR's are waiting for review!" "They are ${pendingPRs} waiting for your review! Please check them :)" --icon=dialog-information
+fi
