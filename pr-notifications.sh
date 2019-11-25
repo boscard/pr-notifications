@@ -2,8 +2,8 @@
 set -eo pipefail
 
 token=$1
-fullReminder=$2
-sqlite3DbPath=$3
+sqlite3DbPath=$2
+fullReminder=$3
 
 function executeCurl() {
 
@@ -83,7 +83,7 @@ do
 	if [ $(sqlite3 "$sqlite3DbPath" "SELECT COUNT(*) FROM prs WHERE id=${pr_id}") -eq 0 ]
 	then
 		sqlite3 "$sqlite3DbPath" "INSERT INTO prs (id,html_url,title) VALUES ('${pr_id}','${html_link}','${title}')"
-		notify-send 'New PR needs yours attention!' "There is new PR waiting for you :)\n\t${title}\n\t${html_link}" --icon=dialog-information
+		notify-send 'New PR needs yours attention!' "<p>There is new PR waiting for you :)<br/><a href='${html_link}'>${title}</a></p>" --icon=dialog-information
 	fi
 done
 IFS=$oldIFS

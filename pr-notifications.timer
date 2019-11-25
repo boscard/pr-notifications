@@ -1,0 +1,9 @@
+[Unit]
+Description=Send notification when someone asked for PR review
+
+[Timer]
+OnCalendar=Mon-Fri *-*-* 8,9,10,11,12,13,14,15,16,17,18:*:00
+Unit=pr-notifications.service
+
+[Install]
+WantedBy=timers.target

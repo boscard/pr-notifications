@@ -1,0 +1,14 @@
+[Unit]
+Description=Send notification when someone asked for PR review
+Requires=graphical.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/pr-notifications.sh <github-token>: /var/lib/pr-notifications/info.db 86400
+Type=simple
+User=<userName>
+Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/<userId>/bus"
+
+[Install]
+WantedBy=graphical.target
