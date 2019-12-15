@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -eo pipefail
 
 configFile="${1:-$HOME/.config/pr-notifier/vars}"
@@ -117,7 +117,7 @@ do
 	pr_id=$(echo $dataLine | awk -F ';' '{print $1}')
 	html_link=$(echo $dataLine | awk -F ';' '{print $2}')
 	title=$(echo $dataLine | awk -F ';' '{print $3}')
-	if [ $(sqlite3 "$sqlite3DbPath" "SELECT COUNT(*) FROM prs WHERE id=${pr_id}") -eq 0 ]
+	if [ $(sqlite3 "$sqlite3DbPath" "SELECT COUNT(*) FROM prs WHERE id=${pr_id}") -ne 0 ]
 	then
 		sqlite3 "$sqlite3DbPath" "INSERT INTO prs (id,html_url,title) VALUES ('${pr_id}','${html_link}','${title}')"
 		notify 'New PR needs yours attention!' 'There is new PR waiting for you :)' ${html_link} ${title}
