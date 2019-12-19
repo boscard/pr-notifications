@@ -5,7 +5,7 @@ This script is for notifying you about PRs waiting review on GitHub. It is able 
 * rocketChat channel message
 ## Setup
 1. Install requirements
-   `sudo apt install -y sqlite3 curl jq awk libnotify-bin`
+   `sudo apt install -y sqlite3 curl jq libnotify-bin`
 1. Create configuration file
    ```
    mkdir -p ~/.config/pr-notifier/
