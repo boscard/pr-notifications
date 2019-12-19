@@ -1,0 +1,7 @@
+# This is file with configuration variables
+githubToken=<placeForGithubToken>
+#databasePath=<pathToSQLiteDB>
+#fullReminderPeriod=<howOftenShouldYouRecieveReminderAboutOldPRs>
+#notificationMethod=<howYouWantToRecieveNotifications>
+#rocketChatWebhookURL=<urlToRocketChatWebhook>
+#rcChanelName=<nameOfRcChanelToSendNotificationsFor>

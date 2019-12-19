@@ -1,0 +1,13 @@
+[Unit]
+Description=Send notification when someone asked for PR review for %I user
+Requires=graphical.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/pr-notifications.sh
+Type=simple
+User=%I
+
+[Install]
+WantedBy=graphical.target
