@@ -8,7 +8,6 @@ After=network-online.target
 ExecStart=/usr/local/bin/pr-notifications.sh
 Type=simple
 User=%I
-Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(/usr/bin/id %I -u)/bus"
 
 [Install]
 WantedBy=graphical.target

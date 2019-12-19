@@ -43,6 +43,7 @@ function checkDependencies() {
 }
 
 function notifyNotifySend() {
+	export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(/usr/bin/id -u)/bus
 	if [ ! -z "${4}" ]
 	then
 		notify-send "${1}" "<p>${2}<br/><a href='${3}'>${4}</a></p>" --icon=dialog-information
@@ -130,5 +131,8 @@ if [ $((currentTS - lastNotificationDate)) -gt $fullReminder ]
 then
 	sqlite3 "$sqlite3DbPath" "UPDATE config SET full_reminder_last_executed_at=${currentTS}"
 	message="They are ${pendingPRs} waiting for your review. Please check them :)"
-	notify 'Some PRs are waiting for review!' "${message}"
+	if [ ${pendingPRs} -ne 0 ]
+	then
+		notify 'Some PRs are waiting for review!' "${message}"
+	fi
 fi
