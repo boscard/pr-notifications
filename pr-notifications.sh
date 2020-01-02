@@ -107,6 +107,11 @@ currentTS=$(date +%s)
 
 # get user login
 userLogin=$(executeCurl -s -L -u "${githubToken}:" https://api.github.com/user | jq -r '.login')
+if [ -z $userLogin ]
+then
+	exit 10
+fi
+
 
 pendingPRs=0
 # get pr's
